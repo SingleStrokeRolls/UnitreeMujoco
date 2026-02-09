@@ -2,7 +2,7 @@
   <compiler angle="radian" meshdir="meshes/" autolimits="true"/>
 
   <default>
-    <joint damping="1" armature="0.1"  frictionloss="0.2" />
+    <joint damping="3" armature="0.1"  frictionloss="0.2" />
   </default>
 
   <asset>
@@ -38,6 +38,9 @@
 
   <worldbody>
     <body name="pelvis" pos="0 0 1.03">
+      <body name="tof_point" pos="-0.09 0 0" quat="0.3827 0 -0.9239 0">
+        <site name="tof_origin" pos="0 0 0" size="0.005"/>
+      </body>
       <inertial pos="-0.0004 3.7e-05 -0.046864" quat="0.497097 0.496809 -0.503132 0.502925" mass="5.983" diaginertia="0.0531565 0.0491678 0.00902583"/>
       <joint name="floating_base_joint" type="free" limited="false" actuatorfrclimited="false"/>
       <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.1 0.1 0.1 1" mesh="pelvis"/>
@@ -111,6 +114,8 @@
         </body>
       </body>
       <body name="torso_link">
+        <geom name="status_led" type="sphere" size="0.03" pos="0.1 0 0.2" 
+              rgba="0 1 0 1" contype="0" conaffinity="0" group="1"/>
         <inertial pos="0.000489 0.002797 0.20484" quat="0.999989 -0.00130808 -0.00282289 -0.00349105" mass="17.789" diaginertia="0.487315 0.409628 0.127837"/>
         <joint name="torso_joint" pos="0 0 0" axis="0 0 1" range="-2.35 2.35" actuatorfrcrange="-200 200"/>
         <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.1 0.1 0.1 1" mesh="torso_link"/>
@@ -324,5 +329,7 @@
 
     <framepos name="frame_pos" objtype="site" objname="imu" />
     <framelinvel name="frame_vel" objtype="site" objname="imu" />
+    
+    <rangefinder name="tof" site="tof_origin" cutoff="5"/>
   </sensor>
 </mujoco>
