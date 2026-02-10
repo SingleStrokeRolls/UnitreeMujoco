@@ -8,8 +8,14 @@ import config
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+import os
 
 def export_csv(csv_name, t_store, gyro_store, acc_store, tof_store):
+    dir_path = "./csv"
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+    fullpath = os.path.join(dir_path, csv_name)
+    
     # 4. 转 numpy
     t = np.array(t_store)
     gyro = np.array(gyro_store)
@@ -17,28 +23,28 @@ def export_csv(csv_name, t_store, gyro_store, acc_store, tof_store):
     tof = np.array(tof_store)
     # print(t)
     # 从后往前找 t 最接近 0 的点（断点）
-    idx = np.where(t <= 0.005)[0]
+    # idx = np.where(t <= 0.005)[0]
     # print(idx)
-    if idx.size:
-        start = idx[-1] # 最后一次 reset 的起点
-    else:
-        start = 0 # 没找到就全画
+    # if idx.size:
+    #   start = idx[-1] # 最后一次 reset 的起点
+    # else:
+        # start = 0 # 没找到就全画
     # print(start)
-    t = t[start:] - t[start] # 时间从 0 开始
-    gyro = gyro[start:]
-    acc = acc[start:]
-    tof = tof[start:]
+    # t = t[start:] - t[start] # 时间从 0 开始
+    # gyro = gyro[start:]
+    # acc = acc[start:]
+    # tof = tof[start:]
     data = np.column_stack([t, acc, gyro, tof])
     # 保存为 CSV，带表头
     np.savetxt(
-        csv_name,
+        fullpath,
         data,
         delimiter=',',
         fmt='%.6f', # 根据精度需求调整：%.3f, %.6f 等
         header='t,acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,tof',
         comments='' # 去掉 # 注释符号，让表头干净
     )
-    print(f"CSV 已保存，共 {len(t)} 行数据")
+    print(f"CSV Saved, Total {len(t)} Rows of Data")
 
 mj_model = mujoco.MjModel.from_xml_path(config.ROBOT_SCENE)
 mj_data = mujoco.MjData(mj_model)
@@ -84,10 +90,10 @@ def run_simulation():
         mujoco.mj_step(mj_model, mj_data)
       
         # store imu
-        # t_store.append(mj_data.time)
-        # gyro_store.append(mj_data.sensor("imu_gyro").data.copy())
-        # acc_store.append(mj_data.sensor("imu_acc").data.copy())
-        # tof_store.append(mj_data.sensor("tof").data.copy())
+        t_store.append(mj_data.time)
+        gyro_store.append(mj_data.sensor("imu_gyro").data.copy())
+        acc_store.append(mj_data.sensor("imu_acc").data.copy())
+        tof_store.append(mj_data.sensor("tof").data.copy())
        
         # control
         #left_hip_pitch_id = mujoco.mj_name2id(mj_model, mujoco.mjtObj.mjOBJ_ACTUATOR, "left_hip_pitch_joint")
@@ -110,6 +116,12 @@ def run_simulation():
             direction, force_mag = random()
             duration.append(mj_data.time)
             mujoco.mj_resetData(mj_model, mj_data)
+            export_csv(str(episode)+'.csv', t_store, gyro_store, acc_store, tof_store)
+            t_store = []
+            gyro_store = []
+            acc_store = [] 
+            tof_store = []
+            duration = []
             episode = episode + 1
            
        
