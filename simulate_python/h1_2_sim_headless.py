@@ -46,6 +46,8 @@ def export_csv(csv_name, t_store, gyro_store, acc_store, tof_store):
     )
     print(f"CSV Saved, Total {len(t)} Rows of Data")
 
+TOTAL_EPISODE = 1000
+
 mj_model = mujoco.MjModel.from_xml_path(config.ROBOT_SCENE)
 mj_data = mujoco.MjData(mj_model)
 
@@ -75,7 +77,6 @@ def run_simulation():
     gyro_store = [] # 3 轴角速度
     acc_store = [] # 3 轴加速度
     tof_store = []
-    duration = []
    
     #randomness
     direction, force_mag = random()
@@ -105,28 +106,26 @@ def run_simulation():
         #right_knee_id = mujoco.mj_name2id(mj_model, mujoco.mjtObj.mjOBJ_ACTUATOR, "right_knee_joint")
         #mj_data.ctrl[right_knee_id] = 9.0
        
+        # ex-force
         body_name = "torso_link"
         body_id = mujoco.mj_name2id(mj_model, mujoco.mjtObj.mjOBJ_BODY, body_name)
-        if 0 <= mj_data.time <= 0.2:
+        if 0 <= mj_data.time <= 0.15:
             # xfrc_applied[body_id, 0:3] 是力，[3:6] 是力矩
             mj_data.xfrc_applied[body_id, :3] = force_mag * direction
         pelvis_id = mujoco.mj_name2id(mj_model, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
         # print(mj_data.xpos[pelvis_id][2])
         if mj_data.xpos[pelvis_id][2] <= 0.25 or mj_data.time >= 10:
             direction, force_mag = random()
-            duration.append(mj_data.time)
             mujoco.mj_resetData(mj_model, mj_data)
             export_csv(str(episode)+'.csv', t_store, gyro_store, acc_store, tof_store)
             t_store = []
             gyro_store = []
             acc_store = [] 
             tof_store = []
-            duration = []
             episode = episode + 1
            
        
-        if episode >= 10:
-            print(duration)
+        if episode >= TOTAL_EPISODE:
             running = False
         
         time_until_next_step = mj_model.opt.timestep - (

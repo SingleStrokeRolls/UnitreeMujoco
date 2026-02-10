@@ -150,7 +150,7 @@ def SimulationThread():
         
         body_name = "torso_link"
         body_id = mujoco.mj_name2id(mj_model, mujoco.mjtObj.mjOBJ_BODY, body_name)      
-        if 0 <= mj_data.time <= 0.2:
+        if 0 <= mj_data.time <= 0.15:
             # xfrc_applied[body_id, 0:3] 是力，[3:6] 是力矩
             mj_data.xfrc_applied[body_id, :3] = force_mag * direction
 
