@@ -45,7 +45,7 @@ def export_csv(csv_name, t_store, gyro_store, acc_store, tof_store):
     )
     print(f"CSVs Saved.")
 
-TOTAL_EPISODE = 15
+TOTAL_EPISODE = 2000
 
 mj_model = mujoco.MjModel.from_xml_path(config.ROBOT_SCENE)
 mj_data = mujoco.MjData(mj_model)
