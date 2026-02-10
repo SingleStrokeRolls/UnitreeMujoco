@@ -5,7 +5,6 @@ import threading
 from unitree_sdk2py.core.channel import ChannelFactoryInitialize
 from unitree_sdk2py_bridge import UnitreeSdk2Bridge, ElasticBand
 import config
-import matplotlib.pyplot as plt
 import numpy as np
 import math
 import os
@@ -44,9 +43,9 @@ def export_csv(csv_name, t_store, gyro_store, acc_store, tof_store):
         header='t,acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,tof',
         comments='' # 去掉 # 注释符号，让表头干净
     )
-    print(f"CSV Saved, Total {len(t)} Rows of Data")
+    print(f"CSVs Saved.")
 
-TOTAL_EPISODE = 1000
+TOTAL_EPISODE = 15
 
 mj_model = mujoco.MjModel.from_xml_path(config.ROBOT_SCENE)
 mj_data = mujoco.MjData(mj_model)
