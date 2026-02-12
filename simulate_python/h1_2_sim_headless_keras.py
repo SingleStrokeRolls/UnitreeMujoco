@@ -47,7 +47,7 @@ def export_csv(csv_name, t_store, gyro_store, acc_store, tof_store):
     )
     print(f"CSVs Saved.")
 
-TOTAL_EPISODE = 2
+TOTAL_EPISODE = 200
 
 mj_model = mujoco.MjModel.from_xml_path(config.ROBOT_SCENE)
 mj_data = mujoco.MjData(mj_model)
@@ -100,10 +100,10 @@ def run_simulation():
         mujoco.mj_step(mj_model, mj_data)
       
         # store imu
-        t_store.append(mj_data.time)
-        gyro_store.append(mj_data.sensor("imu_gyro").data.copy())
-        acc_store.append(mj_data.sensor("imu_acc").data.copy())
-        tof_store.append(mj_data.sensor("tof").data.copy())
+        # t_store.append(mj_data.time)
+        # gyro_store.append(mj_data.sensor("imu_gyro").data.copy())
+        # acc_store.append(mj_data.sensor("imu_acc").data.copy())
+        # tof_store.append(mj_data.sensor("tof").data.copy())
        
         # control
         #left_hip_pitch_id = mujoco.mj_name2id(mj_model, mujoco.mjtObj.mjOBJ_ACTUATOR, "left_hip_pitch_joint")
